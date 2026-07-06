@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BIM Modeling - Innovative Design & Building Construction Company (IDBCC)</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f9f9f9;
+      color: #333;
+    }
+    header {
+      background-image: url('carpentry.jpg'); /* Replace with your carpentry photo */
+      background-size: cover;
+      background-position: center;
+      color: #fff;
+      padding: 3rem;
+      text-align: center;
+      position: relative;
+    }
+    header::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,166,81,0.7); /* Semi-transparent green overlay */
+      z-index: 0;
+    }
+    header div {
+      position: relative;
+      z-index: 1;
+      display: inline-block;
+      padding: 2rem;
+      border-radius: 8px;
+    }
+    header img {
+      max-width: 200px;
+      margin-bottom: 1rem;
+    }
+    nav {
+      background: #006837;
+      padding: 1rem;
+      text-align: center;
+    }
+    nav a {
+      color: #fff;
+      margin: 0 1rem;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    section {
+      padding: 3rem;
+      max-width: 1000px;
+      margin: auto;
+    }
+    .hero {
+      background: #eee;
+      padding: 2rem;
+      text-align: center;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+    }
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    .gallery img {
+      width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    footer {
+      background: #00a651;
+      color: #fff;
+      text-align: center;
+      padding: 1rem;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <img src="https://copilot.microsoft.com/th/id/BCO.f57dfed2-9938-48fa-952c-797c54365711.png" alt="IDBCC Logo">
+      <h1>BIM Modeling</h1>
+      <p>Innovative Design & Building Construction Company (IDBCC)</p>
+    </div>
+  </header>
+
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="#overview">Overview</a>
+    <a href="#details">Details</a>
+    <a href="#gallery">Gallery</a>
+    <a href="#contact">Contact</a>
+  </nav>
+
+  <section id="overview">
+    <div class="hero">
+      <h2>Project Overview</h2>
+      <p>This BIM Model showcases custom BIM and Details work, highlighting advanced joinery techniques and precision and functionality for residential and Comercial interiors.</p>
+    </div>
+  </section>
+       <!-- Client Work Section -->
+<section id="client-work">
+  <h2>Some Of Our Works</h2>
+  <video controls class="client-video">
+    <source src="nken.MKV" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+</section>
+
+<style>
+  #client-work {
+    padding: 3rem;
+    max-width: 800px; /* keeps section neat */
+    margin: auto;
+    background: rgba(0,0,0,0.6);
+    border-radius: 8px;
+    color: #fff;
+    text-align: center;
+  }
+  .client-video {
+    width: 100%;          /* ✅ scales to screen width */
+    max-width: 600px;     /* ✅ won’t stretch too wide */
+    height: auto;         /* ✅ keeps aspect ratio */
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+
+  /* ✅ Mobile adjustments */
+  @media (max-width: 768px) {
+    #client-work {
+      padding: 1.5rem;
+    }
+    .client-video {
+      max-width: 100%;   /* ✅ fills available width neatly */
+    }
+  }
+</style>
+
+
+  <section id="details">
+    <h2>Project Details</h2>
+    <ul>
+      <li><strong>Client:</strong> Private Residential</li>
+      <li><strong>Year:</strong> 2026</li>
+      <li><strong>Tools:</strong> Hand tools, power saws, AutoCAD for design</li>
+      <li><strong>Scope:</strong> Furniture making, framing, finishing</li>
+    </ul>
+  </section>
+
+  <section id="gallery" class="gallery">
+    <h2>Gallery</h2>
+    <img src="carpentry1.jpg" alt="Custom Wooden Furniture">
+    <img src="carpentry2.jpg" alt="Framing Work">
+    <img src="carpentry3.jpg" alt="Finished Carpentry Project">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IDBCC Responsive Grid Gallery</title>
+  <style>
+    .gallery {
+      display: grid;                 /* ✅ use grid layout */
+      grid-template-columns: repeat(4, 1fr); /* ✅ 4 columns on PC */
+      gap: 20px;                     /* ✅ spacing between images */
+      justify-items: center;         /* ✅ center images in each cell */
+    }
+
+    .gallery img {
+      width: 100%;
+      max-width: 250px;              /* ✅ larger size on PC */
+      height: auto;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+    }
+
+    /* Tablet view */
+    @media (max-width: 1024px) {
+      .gallery {
+        grid-template-columns: repeat(2, 1fr); /* ✅ 2 columns on tablets */
+      }
+    }
+
+    /* Mobile view (Android) */
+    @media (max-width: 768px) {
+      .gallery {
+        grid-template-columns: 1fr;  /* ✅ stack vertically on mobile */
+      }
+      .gallery img {
+        max-width: 150px;            /* ✅ smaller size on mobile */
+      }
+    }
+  </style>
+</head>
+<body>
+  <section id="portfolio">
+    <h2>Sample Floor Plans</h2>
+    <div class="gallery">
+      <img src="sam1.png" alt="Floor plan 1" />
+      <img src="sam2.png" alt="Floor plan 2" />
+      <img src="sam3.png" alt="Floor plan 3" />
+      <img src="sam4.png" alt="Floor plan 4" />
+      <img src="sam5.png" alt="Floor plan 5" />
+      <img src="sam6.png" alt="Floor plan 6" />
+    </div>
+  </section>
+</body>
+</html>
+
+  </section>
+
+  <section id="contact">
+    <h2>Contact</h2>
+    <p>Phone: <a href="tel:+231880432833">+231 880 432 833</a></p>
+    <p>Email: <a href="mailto:nathankilpoo@gmail.com">nathankilpoo@gmail.com</a></p>
+  </section>
+
+  <footer>
+    <p>&copy; 2026 Innovative Design & Building Construction Company (IDBCC). All rights reserved.</p>
+  </footer>
+</body>
+</html>
