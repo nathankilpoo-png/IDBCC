@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>IDBCC — Complete Site with Storage & Publish</title>
+  <style>
+    :root{
+      --brand:#00a651;
+      --accent:#007BFF;
+      --muted:#f0f0f0;
+      --panel-bg:#fff;
+      --panel-radius:10px;
+      --shadow:0 6px 14px rgba(0,0,0,0.08);
+      --max-width:1100px;
+    }
+    html,body{height:100%}
+    body{
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      margin:0;
+      background:#f6f7f8;
+      color:#222;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.45;
+    }
+
+    /* Header */
+    header{
+      background-image: url('3D.png');
+      background-size:cover;
+      background-position:center;
+      padding:3.2rem 1rem;
+      color:#fff;
+      text-align:center;
+      position:relative;
+    }
+    header::before{
+      content:"";
+      position:absolute;inset:0;
+      background:linear-gradient(180deg, rgba(0,166,81,0.85) 0%, rgba(0,104,55,0.6) 100%);
+      z-index:0;
+    }
+    header .wrap{position:relative;z-index:1;max-width:var(--max-width);margin:auto;display:flex;flex-direction:column;align-items:center;gap:12px}
+    header img.logo{max-width:160px;border-radius:8px;display:block;margin:0 auto}
+    header h1{margin:0 0 .25rem;font-size:1.8rem}
+    header p{margin:0;color:rgba(255,255,255,0.95)}
+    .hero-cta { display:flex; gap:12px; margin-top:12px; flex-wrap:wrap; justify-content:center; }
+    .hero-cta a { background: #fff; color: var(--brand); padding:10px 14px; border-radius:8px; text-decoration:none; font-weight:700; box-shadow:0 6px 14px rgba(0,0,0,0.12); }
+    .hero-cta a.primary { background: var(--brand); color:#fff; }
+
+    .featured-strip { width:100%; max-width:var(--max-width); margin: 18px auto 0; display:flex; gap:12px; overflow-x:auto; padding:12px; box-sizing:border-box; }
+    .featured-item { min-width:220px; background:rgba(255,255,255,0.95); border-radius:8px; padding:8px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:8px; align-items:flex-start; }
+    .featured-item img, .featured-item video { width:100%; border-radius:6px; display:block; }
+    .featured-item .meta { font-size:0.9rem; color:#333; font-weight:600; }
+
+    nav{background:rgba(0,104,55,0.95);padding:.8rem;text-align:center;position:sticky;top:0;z-index:50}
+    nav a{color:#fff;margin:0 .8rem;text-decoration:none;font-weight:600}
+    nav a:hover{text-decoration:underline}
+
+    .container{max-width:var(--max-width);margin:2rem auto;padding:0 1rem}
+    section.card{background:var(--panel-bg);border-radius:var(--panel-radius);box-shadow:var(--shadow);padding:1.6rem;margin-bottom:1.6rem}
+    h2.section-title{color:var(--accent);margin-top:0}
+
+    .projects{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+    .project-card{background:#fff;padding:1rem;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.06)}
+
+    /* Storage & Publish styles (from user snippet) */
+    #storageSection, #publishSection {
+      max-width: 1000px; margin: 40px auto; background: #fff;
+      padding: 25px; border-radius: 12px;
+      box-shadow: 0 12px 14px rgba(0,0,0,0.1); text-align: center;
+    }
+    #storageSection { display: none; } /* hidden by default */
+    h2 { color: #007BFF; margin-bottom: 20px; }
+    #uploadForm input { margin: 10px 0; }
+    #fileList, #publishVideos, #publishImages, #publishOthers {
+      list-style: none; padding: 0; margin-top: 20px;
+    }
+    #fileList li, #publishVideos li, #publishImages li, #publishOthers li {
+      background: #f0f0f0; margin: 12px 0; padding: 12px;
+      border-radius: 8px; text-align: left;
+    }
+    .delete-btn, .publish-btn, .unpublish-btn {
+      border: none; padding: 6px 12px; border-radius: 6px;
+      cursor: pointer; margin-left: 10px;
+    }
+    .delete-btn { background: #dc3545; color: #fff; }
+    .publish-btn { background: #28a745; color: #fff; }
+    .unpublish-btn { background: #ffc107; color: #000; }
+    #searchBar {
+      width: 80%; padding: 10px; margin: 15px auto;
+      border: 1px solid #ccc; border-radius: 6px;
+      display:block;
+    }
+
+    /* Reviews */
+    #reviewForm{display:flex;flex-direction:column;gap:.6rem;align-items:center}
+    #reviewForm input,#reviewForm textarea,#reviewForm select{width:95%;max-width:720px;padding:.9rem;border-radius:8px;border:1px solid #ddd}
+    #reviewForm button{background:var(--accent);color:#fff;border:none;padding:10px 18px;border-radius:8px;cursor:pointer}
+    #reviews{list-style:none;padding:0;margin-top:1rem}
+    #reviews li{display:flex;align-items:flex-start;gap:12px;background:var(--muted);padding:12px;border-radius:8px;margin-bottom:.8rem}
+    .profile-pic{width:52px;height:52px;border-radius:50%;flex-shrink:0}
+    .review-content{flex:1}
+    .review-name{font-weight:700;color:var(--accent)}
+    .stars{color:gold;margin:.25rem 0}
+    .review-delete-btn{display:none;background:#dc3545;color:#fff;border:none;padding:6px 10px;border-radius:6px;cursor:pointer;margin-left:8px}
+
+    footer{background:rgba(0,166,81,0.9);color:#fff;padding:18px;text-align:center;margin-top:2rem}
+
+    @media (max-width:720px){
+      #storageSection, #publishSection { margin: 20px 12px; }
+      .featured-item { min-width:180px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <img class="logo" src="https://copilot.microsoft.com/th/id/BCO.f57dfed2-9938-48fa-952c-797c54365711.png" alt="IDBCC Logo">
+      <h1>Innovative Design & Building Construction Company (IDBCC)</h1>
+      <p>From Floor Plans to Finished Builds</p>
+      <div class="hero-cta" role="navigation" aria-label="Primary actions">
+        <a class="primary" href="#projects">View Projects</a>
+        <a href="#publishSection">See Media</a>
+        <a href="#reviewSection">Read Reviews</a>
+      </div>
+    </div>
+    <div id="featuredStrip" class="featured-strip" aria-hidden="false" aria-label="Featured media"></div>
+  </header>
+
+  <nav>
+    <a href="#about">About</a>
+    <a href="#projects">Projects</a>
+    <a href="#publishSection">Media</a>
+    <a href="#reviewSection">Reviews</a>
+    <a href="#contact">Contact</a>
+  </nav>
+
+  <main class="container">
+    <section id="about" class="card">
+      <h2 class="section-title">About Us</h2>
+      <p>We are Innovative Design & Building Construction Company (IDBCC), specializing in drafting, carpentry, masonry, and BIM modeling. Our mission is to combine technical design with practical construction expertise to deliver professional results.</p>
+    </section>
+<section id="skills">
+    <h2>Projests</h2>
+    <div class="skill">
+ </section>
+
+    <section id=''>
+    <h2Projects</h2
+   
+    <div class="projects">
+      <div class="project-card">
+        <h3><a href="floorplan.html">Residential Project</a></h3>
+        <p>Four-bedroom layout with roof details, drafted in AutoCAD.</p>
+      </div>
+      <div class="project-card">
+        <h3><a href="Commercial.html">Commercial Project</a></h3>
+        <p>Land use and zoning plan prepared for construction approval.</p>
+      </div>
+      <div class="project-card">
+        <h3><a href="bim.html">BIM Model</a></h3>
+        <p>3D model with construction sequencing and detail drawings.</p>
+      </div>
+      <div class="project-card">
+        <h3><a href="carpentry.html">Carpentry Project</a></h3>
+        <p>Custom furniture and framing work showcasing advanced joinery.</p>
+      </div>
+      <div class="project-card">
+        <h3><a href="masonry.html">Masonry Project</a></h3>
+        <p>Decorative stone wall and foundation work for residential build.</p>
+      </div>
+    </div>
+  </section>
+
+    <!-- Storage Section (hidden by default, admin only) -->
+    <section id="storageSection">
+      <h2>File & Video Storage (Admin Only)</h2>
+      <form id="uploadForm">
+        <input type="file" id="fileInput" multiple>
+        <button type="submit">Upload</button>
+      </form>
+      <ul id="fileList"></ul>
+    </section>
+
+    <!-- Publish Section (public view) -->
+    <section id="publishSection">
+      <h2>Published Files & Videos</h2>
+      <input type="text" id="searchBar" placeholder="Search published content...">
+      <h3>Videos</h3>
+      <ul id="publishVideos"></ul>
+      <h3>Images</h3>
+      <ul id="publishImages"></ul>
+      <h3>Other Files</h3>
+      <ul id="publishOthers"></ul>
+    </section>
+
+    <!-- Reviews -->
+    <section id="reviewSection" class="card">
+      <h2 class="section-title">Customer Reviews</h2>
+      <form id="reviewForm" aria-label="Post a review">
+        <input type="text" name="name" placeholder="Your name" required />
+        <input type="email" name="email" placeholder="Your email" required />
+        <textarea name="comments" placeholder="Your review" rows="4" required></textarea>
+        <select name="rating" required>
+          <option value="">Rate us (1–5)</option>
+          <option value="1">⭐</option>
+          <option value="2">⭐⭐</option>
+          <option value="3">⭐⭐⭐</option>
+          <option value="4">⭐⭐⭐⭐</option>
+          <option value="5">⭐⭐⭐⭐⭐</option>
+        </select>
+        <button type="submit">Post Review</button>
+      </form>
+
+      <ul id="reviews" aria-live="polite"></ul>
+
+      <div style="text-align:center;margin-top:12px">
+        <button id="unlockAdminBtn">Admin Login</button>
+      </div>
+
+      <div id="adminPanel" aria-hidden="true">
+        <h3>Admin Panel</h3>
+        <input id="newPass" type="password" placeholder="Enter new password" />
+        <button id="changePassBtn">Change Password</button>
+        <button id="unlockDeleteBtn">Unlock Delete Buttons</button>
+      </div>
+    </section>
+
+    <section class="card" aria-label="Connect and download">
+      <h2 class="section-title">Connect With Us</h2>
+      <div class="social" role="navigation" aria-label="Social links">
+        <a href="https://www.youtube.com/@nathany.nkilpoo5624?si=hJhESj3XqEgfmOsA" target="_blank" rel="noopener"><img src="https://copilot.microsoft.com/th/id/BCO.fa6b1de7-7f79-497c-93d9-21613f79cebf.png" alt="" width="36" height="36"> YouTube</a>
+        <a href="https://www.facebook.com/nathan.n.y.kilpoo.2025" target="_blank" rel="noopener"><img src="https://copilot.microsoft.com/th/id/BCO.5fa79d24-3ed0-459d-b07b-c28ed3454979.png" alt="" width="36" height="36"> Facebook</a>
+        <a href="https://wa.me/0775701195" target="_blank" rel="noopener"><img src="https://copilot.microsoft.com/th/id/BCO.8d713905-1281-4d47-9648-e2f3b76941b7.png" alt="" width="36" height="36"> WhatsApp</a>
+      </div>
+
+      <div style="text-align:center;margin-top:14px">
+        <a class="download-link" href="ABHARRIS WORK2.PDF" download aria-label="Download sample template">
+          <svg width="20" height="16" viewBox="1 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v12" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 11l4 4 4-4" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 21H3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Download Free Sample
+        </a>
+      </div>
+    </section>
+
+    <section id="contact" class="card">
+      <h2 class="section-title">Contact</h2>
+      <p>Phone: <a href="tel:+231880432833">+231 880 432 833</a></p>
+      <p>Email: <a href="mailto:Idbcc.work@gmail.com">Idbcc.work@gmail.com</a></p>
+      
+      <p>Location: <a href="https://Monrovia,Libria" target="_blank" rel="noopener">Monrovia,Liberia</a></p>
+    </section>
+  </main>
+
+  <footer><p>&copy; 2026 Innovative Design & Building Construction Company (IDBCC). All rights reserved.</p></footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.19.0/js/md5.min.js"></script>
+
+  <script>
+    /*************************
+     * Storage & Publish (replaced section integrated)
+     *************************/
+    const uploadForm = document.getElementById('uploadForm');
+    const fileInput = document.getElementById('fileInput');
+    const fileList = document.getElementById('fileList');
+    const publishVideos = document.getElementById('publishVideos');
+    const publishImages = document.getElementById('publishImages');
+    const publishOthers = document.getElementById('publishOthers');
+    const storageSection = document.getElementById('storageSection');
+    const searchBar = document.getElementById('searchBar');
+
+    // Admin password
+    let adminPassword = atob("NjMyMTQua2"); // "63214.k"
+
+    // Unlock storage (admin)
+    function unlockStorage() {
+      const entered = prompt("Enter admin password:");
+      if (entered === adminPassword) {
+        storageSection.style.display = "block";
+        alert("Storage section unlocked!");
+        displayFiles(); // refresh admin storage list
+        displayPublished(); // refresh published with admin controls
+      } else {
+        alert("Incorrect password.");
+      }
+    }
+
+    // Hook admin unlock button in reviews area to same unlock
+    document.getElementById('unlockAdminBtn').addEventListener('click', unlockStorage);
+
+    // IndexedDB setup
+    let db;
+    const request = indexedDB.open("IDBCCStorage", 2);
+
+    request.onupgradeneeded = function(event) {
+      db = event.target.result;
+      if (!db.objectStoreNames.contains("files")) {
+        db.createObjectStore("files", { keyPath: "id", autoIncrement: true });
+      }
+      if (!db.objectStoreNames.contains("published")) {
+        db.createObjectStore("published", { keyPath: "id", autoIncrement: true });
+      }
+    };
+
+    request.onsuccess = function(event) {
+      db = event.target.result;
+      displayFiles();
+      displayPublished(); // show published items for visitors
+      populateFeaturedStrip();
+    };
+
+    request.onerror = function() {
+      console.error("IndexedDB error");
+    };
+
+    // Display stored files (admin)
+    function displayFiles() {
+      fileList.innerHTML = '';
+      if (!db) return;
+      const transaction = db.transaction("files", "readonly");
+      const store = transaction.objectStore("files");
+      store.openCursor().onsuccess = function(event) {
+        const cursor = event.target.result;
+        if (cursor) {
+          const file = cursor.value;
+          const li = document.createElement('li');
+          li.innerHTML = `<strong>${escapeHtml(file.name)}</strong> (${escapeHtml(file.type)}) <a href="${file.url}" target="_blank">Preview</a>`;
+
+          // Thumbnail preview in storage (small)
+          if (file.type && file.type.startsWith("image")) {
+            li.innerHTML += `<br><img src="${file.url}" style="max-width:200px;margin-top:8px;border-radius:6px">`;
+          } else if (file.type && file.type.startsWith("video")) {
+            li.innerHTML += `<br><video src="${file.url}" style="max-width:200px;margin-top:8px;border-radius:6px" controls></video>`;
+          }
+
+          const delBtn = document.createElement('button');
+          delBtn.textContent = 'Delete';
+          delBtn.className = 'delete-btn';
+          delBtn.onclick = () => {
+            const tx = db.transaction("files", "readwrite");
+            tx.objectStore("files").delete(file.id);
+            tx.oncomplete = () => {
+              displayFiles();
+            };
+          };
+          li.appendChild(delBtn);
+
+          const pubBtn = document.createElement('button');
+          pubBtn.textContent = 'Publish';
+          pubBtn.className = 'publish-btn';
+          pubBtn.onclick = () => publishFile(file);
+          li.appendChild(pubBtn);
+
+          fileList.appendChild(li);
+          cursor.continue();
+        }
+      };
+    }
+
+    // Upload handler
+    uploadForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      if (!fileInput.files.length) return;
+      const files = Array.from(fileInput.files);
+      (async function processFiles() {
+        for (const file of files) {
+          await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+              const transaction = db.transaction("files", "readwrite");
+              const store = transaction.objectStore("files");
+              store.add({ name: file.name, type: file.type, url: event.target.result, createdAt: Date.now() });
+              transaction.oncomplete = function() {
+                resolve();
+              };
+            };
+            reader.readAsDataURL(file);
+          });
+        }
+        displayFiles();
+      })();
+      fileInput.value = '';
+    });
+
+    // Publish permanently (copy from files store into published store)
+    function publishFile(file) {
+      // Ask for optional caption and published-by
+      const caption = prompt("Enter caption for this item (optional):", "") || "";
+      const publishedBy = prompt("Enter published-by name (optional):", "") || "";
+
+      const tx = db.transaction("published", "readwrite");
+      const store = tx.objectStore("published");
+      // store a copy with metadata and timestamp
+      const record = {
+        sourceId: file.id || null,
+        name: file.name,
+        type: file.type,
+        url: file.url,
+        caption: caption.trim() || null,
+        publishedBy: publishedBy.trim() || null,
+        publishedAt: Date.now()
+      };
+      store.put(record);
+      tx.oncomplete = function() {
+        displayPublished();
+        populateFeaturedStrip();
+        alert("Published successfully.");
+      };
+    }
+
+    // Display published files (public)
+    function displayPublished() {
+      [publishVideos, publishImages, publishOthers].forEach(list => list.innerHTML = '');
+      if (!db) return;
+      const transaction = db.transaction("published", "readonly");
+      const store = transaction.objectStore("published");
+      store.openCursor().onsuccess = function(event) {
+        const cursor = event.target.result;
+        if (cursor) {
+          const file = cursor.value;
+          const li = document.createElement('li');
+          li.setAttribute("data-name", (file.name || '').toLowerCase());
+
+          // Build caption and published-by display
+          const captionHtml = file.caption ? `<div style="margin-top:6px;color:#333">${escapeHtml(file.caption)}</div>` : '';
+          const publishedByHtml = file.publishedBy ? `<div style="margin-top:6px;color:#666;font-size:0.9rem">Published by ${escapeHtml(file.publishedBy)} on ${new Date(file.publishedAt).toLocaleString()}</div>` : `<div style="margin-top:6px;color:#666;font-size:0.9rem">Published on ${new Date(file.publishedAt).toLocaleString()}</div>`;
+
+          if (file.type && file.type.startsWith("video")) {
+            li.innerHTML = `<strong>${escapeHtml(file.name)}</strong><br>
+              <video src="${file.url}" controls style="max-width:100%;height:auto;margin-top:.5rem"></video>
+              ${captionHtml}
+              ${publishedByHtml}`;
+            publishVideos.appendChild(li);
+          } else if (file.type && file.type.startsWith("image")) {
+            li.innerHTML = `<strong>${escapeHtml(file.name)}</strong><br>
+              <img src="${file.url}" alt="${escapeHtml(file.name)}" style="max-width:100%;height:auto;margin-top:.5rem;border-radius:6px">
+              ${captionHtml}
+              ${publishedByHtml}`;
+            publishImages.appendChild(li);
+          } else {
+            li.innerHTML = `<strong>${escapeHtml(file.name)}</strong>
+              <a href="${file.url}" target="_blank">Download</a>
+              ${captionHtml}
+              ${publishedByHtml}`;
+            publishOthers.appendChild(li);
+          }
+
+          // If admin view is open, add unpublish control
+          if (storageSection.style.display === "block") {
+            addUnpublish(li, cursor.primaryKey);
+          }
+          cursor.continue();
+        }
+      };
+    }
+
+    // Unpublish removes from published store
+    function addUnpublish(li, id) {
+      const unpubBtn = document.createElement('button');
+      unpubBtn.textContent = 'Unpublish';
+      unpubBtn.className = 'unpublish-btn';
+      unpubBtn.onclick = () => {
+        const tx = db.transaction("published", "readwrite");
+        tx.objectStore("published").delete(id);
+        tx.oncomplete = function() {
+          displayPublished();
+          populateFeaturedStrip();
+        };
+      };
+      li.appendChild(unpubBtn);
+    }
+
+    // Featured strip: show latest 4 published items
+    function populateFeaturedStrip() {
+      const strip = document.getElementById('featuredStrip');
+      if (!strip) return;
+      strip.innerHTML = '';
+      if (!db) return;
+      const tx = db.transaction("published", "readonly");
+      const store = tx.objectStore("published");
+      const items = [];
+      store.openCursor().onsuccess = function(event) {
+        const cursor = event.target.result;
+        if (cursor) {
+          items.push(cursor.value);
+          cursor.continue();
+        } else {
+          items.sort((a,b) => (b.publishedAt || 0) - (a.publishedAt || 0));
+          const featured = items.slice(0,4);
+          if (featured.length === 0) {
+            const placeholder = document.createElement('div');
+            placeholder.className = 'featured-item';
+            placeholder.innerHTML = `<div class="meta">No featured media yet</div><div style="color:#666">Publish media from the admin storage to show here.</div>`;
+            strip.appendChild(placeholder);
+            return;
+          }
+          featured.forEach(file => {
+            const div = document.createElement('div');
+            div.className = 'featured-item';
+            const captionHtml = file.caption ? `<div style="font-size:0.95rem;color:#333;font-weight:600">${escapeHtml(file.caption)}</div>` : `<div class="meta">${escapeHtml(file.name)}</div>`;
+            const publishedByHtml = file.publishedBy ? `<div style="font-size:0.85rem;color:#666">Published by ${escapeHtml(file.publishedBy)}</div>` : `<div style="font-size:0.85rem;color:#666">Published on ${new Date(file.publishedAt).toLocaleDateString()}</div>`;
+            if (file.type && file.type.startsWith('image')) {
+              div.innerHTML = `${captionHtml}<img src="${file.url}" alt="${escapeHtml(file.name)}">${publishedByHtml}`;
+            } else if (file.type && file.type.startsWith('video')) {
+              div.innerHTML = `${captionHtml}<video src="${file.url}" controls></video>${publishedByHtml}`;
+            } else {
+              div.innerHTML = `${captionHtml}<div style="color:#666">File</div>${publishedByHtml}`;
+            }
+            strip.appendChild(div);
+          });
+        }
+      };
+    }
+
+    // Search filter
+    searchBar.addEventListener("input", function() {
+      const query = (searchBar.value || '').toLowerCase();
+      [publishVideos, publishImages, publishOthers].forEach(list => {
+        Array.from(list.children).forEach(item => {
+          const name = item.getAttribute("data-name") || "";
+          item.style.display = name.includes(query) ? "" : "none";
+        });
+      });
+    });
+
+    // Utility: escape HTML
+    function escapeHtml(str) {
+      if (typeof str !== 'string') return '';
+      return str.replace(/[&<>"'`=\/]/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','/':'&#x2F;','`':'&#x60;','=':'&#x3D;'}[s]));
+    }
+
+    /*************************
+     * Reviews (unchanged)
+     *************************/
+    const form = document.getElementById('reviewForm');
+    const reviews = document.getElementById('reviews');
+    const adminPanel = document.getElementById('adminPanel');
+    const changePassBtn = document.getElementById('changePassBtn');
+    const unlockDeleteBtn = document.getElementById('unlockDeleteBtn');
+
+    let reviewAdminPassword = adminPassword;
+    let savedReviews = JSON.parse(localStorage.getItem('reviews')) || [];
+
+    function displayReviews() {
+      reviews.innerHTML = '';
+      savedReviews.forEach((data, index) => {
+        const li = document.createElement('li');
+        const stars = '⭐'.repeat(Math.max(1, Math.min(5, Number(data.rating) || 1)));
+        li.innerHTML = `
+          <img src="${escapeHtml(data.gravatarUrl)}" class="profile-pic" alt="Profile">
+          <div class="review-content">
+            <div class="review-name">${escapeHtml(data.name)}</div>
+            <div class="stars">${stars}</div>
+            <div class="review-comment">${escapeHtml(data.comments)}</div>
+          </div>
+        `;
+        const delBtn = document.createElement('button');
+        delBtn.textContent = 'Delete';
+        delBtn.className = 'review-delete-btn';
+        delBtn.onclick = () => {
+          const entered = prompt("Enter admin password to delete:");
+          if (entered === reviewAdminPassword) {
+            savedReviews.splice(index, 1);
+            localStorage.setItem('reviews', JSON.stringify(savedReviews));
+            displayReviews();
+          } else {
+            alert("Incorrect password. Review not deleted.");
+          }
+        };
+        li.appendChild(delBtn);
+        reviews.appendChild(li);
+      });
+    }
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = form.name.value.trim();
+      const email = form.email.value.trim();
+      const comments = form.comments.value.trim();
+      const rating = form.rating.value;
+      if (!name || !email || !comments || !rating) return;
+      const hash = md5(email.trim().toLowerCase());
+      const gravatarUrl = `https://www.gravatar.com/avatar/${hash}?d=identicon`;
+      const newReview = { name, email, comments, rating, gravatarUrl };
+      savedReviews.push(newReview);
+      localStorage.setItem('reviews', JSON.stringify(savedReviews));
+      displayReviews();
+      form.reset();
+    });
+
+    document.getElementById('unlockAdminBtn').addEventListener('click', unlockStorage);
+
+    changePassBtn.addEventListener("click", function() {
+      const newPass = document.getElementById('newPass').value;
+      if (newPass && newPass.trim() !== "") {
+        reviewAdminPassword = newPass;
+        alert("Admin password updated successfully!");
+        document.getElementById('newPass').value = "";
+      } else {
+        alert("Password cannot be empty.");
+      }
+    });
+
+    unlockDeleteBtn.addEventListener("click", function() {
+      const entered = prompt("Enter admin password to unlock delete buttons:");
+      if (entered === reviewAdminPassword) {
+        document.querySelectorAll('.review-delete-btn').forEach(btn => btn.style.display = "inline-block");
+        alert("Delete buttons unlocked for admin.");
+      } else {
+        alert("Incorrect password.");
+      }
+    });
+
+    displayReviews();
+
+    // Keep featured strip updated when page loads
+    window.addEventListener('load', () => {
+      populateFeaturedStrip();
+    });
+  </script>
+</body>
+</html>
