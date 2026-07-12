@@ -160,7 +160,7 @@
         <p>Land use and zoning plan prepared for construction approval.</p>
       </div>
       <div class="project-card">
-        <h3><a href="bim model.html">BIM Model</a></h3>
+        <h3><a href="bim model.html">BIM Modeling</a></h3>
         <p>3D model with construction sequencing and detail drawings.</p>
       </div>
       <div class="project-card">
@@ -257,10 +257,12 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.19.0/js/md5.min.js"></script>
 
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.19.0/js/md5.min.js"></script>
   <script>
-    /*************************
-     * Storage & Publish (replaced section integrated)
-     *************************/
+    const API_URL = "http://localhost:4000"; // change to your deployed backend URL
+    let token = null;
+
     const uploadForm = document.getElementById('uploadForm');
     const fileInput = document.getElementById('fileInput');
     const fileList = document.getElementById('fileList');
@@ -313,6 +315,36 @@
     request.onerror = function() {
       console.error("IndexedDB error");
     };
+ // Published files
+    async function displayPublished(){
+      [publishVideos,publishImages,publishOthers].forEach(list=>list.innerHTML='');
+      const res = await fetch(`${API_URL}/published`);
+      const files = await res.json();
+      files.forEach(file=>{
+        const li = document.createElement('li');
+        li.setAttribute("data-name",(file.name||'').toLowerCase());
+        const captionHtml = file.caption?`<div>${escapeHtml(file.caption)}</div>`:'';
+        const publishedByHtml = `<div>Published by ${escapeHtml(file.publishedBy||'Admin')} on ${new Date(file.publishedAt).toLocaleString()}</div>`;
+        if(file.type.startsWith("video")){
+          li.innerHTML = `<strong>${escapeHtml(file.name)}</strong><br><video src="${file.url}" controls style="max-width:100%"></video>${captionHtml}${publishedByHtml}`;
+          publishVideos.appendChild(li);
+        } else if(file.type.startsWith("image")){
+          li.innerHTML = `<strong>${escapeHtml(file.name)}</strong><br><img src="${file.url}" style="max-width:100%">${captionHtml}${publishedByHtml}`;
+          publishImages.appendChild(li);
+        } else {
+          li.innerHTML = `<strong>${escapeHtml(file.name)}</strong><a href="${file.url}" target="_blank">Download</a>${captionHtml}${publishedByHtml}`;
+          publishOthers.appendChild(li);
+        }
+        if(token){
+          const unpubBtn = document.createElement('button');
+          unpubBtn.textContent = 'Unpublish';
+          unpubBtn.className = 'unpublish-btn';
+          unpubBtn.onclick = async ()=>{ await fetch(`${API_URL}/unpublish/${file._id}`,{method:"DELETE",headers:{Authorization:`Bearer ${token}`}}); displayPublished(); };
+          li.appendChild(unpubBtn);
+        }
+      });
+    }
+
 
     // Display stored files (admin)
     function displayFiles() {
